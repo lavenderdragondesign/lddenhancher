@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        LavenderDragonDesign Enhancer
 // @namespace   http://tampermonkey.net/
-// @version     24.12 // CRITICAL FIX: Fixed Profit calc.
+// @version     24.13 // Added Resizer @ 300DPI.
 // @description The definitive, stable version. Powerful keyword tool with Etsy trends and a high-performance image editor.
 // @match       https://mydesigns.io/app/*
 // @grant       GM_addStyle
@@ -100,6 +100,7 @@
                 <div class="tab" data-tab="niche">Keywords</div>
                 <div class="tab" data-tab="describer">Image Describer</div>
                 <div class="tab" data-tab="profit">Profit Calc</div>
+                <div class="tab" data-tab="resize">Resize</div>
                 <div class="tab" data-tab="settings">Settings</div>
             </div>
             <div class="tab-content" id="vision-tab" style="display:none;"></div>
@@ -215,10 +216,36 @@
         mainWrapper.querySelector('#profit-tab').innerHTML = profitTabHTML;
         mainWrapper.querySelector('#niche-tab').innerHTML = nicheTabHTML;
         mainWrapper.querySelector('#settings-tab').innerHTML = settingsTabHTML;
+
+        // Inject Resize Tab
+        const resizeTabHTML = `
+          <h3 class="niche-h3">Image Resizer @ 300 DPI</h3>
+          <small class="md-hint">Resize your PNG or JPG images. 300 DPI will be applied to PNGs if enabled.</small>
+          <label for="resize-file-input" class="file-input-label">Choose an Image</label>
+          <input type="file" id="resize-file-input" accept="image/png, image/jpeg" style="display:none;">
+          <div id="resize-file-status">No file selected.</div>
+          <label for="resize-width">Width (px):</label>
+          <input type="number" id="resize-width" value="3000" min="1" />
+          <label for="resize-height">Height (px):</label>
+          <input type="number" id="resize-height" value="3000" min="1" />
+          <label for="resize-dpi-slider">Force 300 DPI: <span id="resize-dpi-value">Yes</span></label>
+          <input type="range" id="resize-dpi-slider" min="0" max="1" value="1" />
+          <button id="resize-download-btn">Download Resized Image</button>
+        `;
+
+        const resizeDiv = document.createElement('div');
+        resizeDiv.id = 'resize-tab';
+        resizeDiv.className = 'tab-content';
+        resizeDiv.style.display = 'none';
+        resizeDiv.innerHTML = resizeTabHTML;
+        // Insert before the settings tab content div
+        mainWrapper.insertBefore(resizeDiv, mainWrapper.querySelector('#settings-tab'));
     }
 
     // --- EVENT LISTENERS ---
     function addEventListeners() {
+        let resizeImageData = null;
+
         // Main UI, Popout, and Modal Click Handler (Event Delegation)
         document.body.addEventListener('click', function(e) {
             const targetEl = e.target;
@@ -299,6 +326,36 @@
                     case 'describer-copy-desc-btn': copyToClipboard(document.getElementById('describer-desc-result').value, targetEl, 'Copy Description'); break;
                     case 'settings-save-gemini-btn': saveGeminiApiKey(); break;
                     case 'md-manage-instructions-btn': openInstructionsModal(); break;
+                    case 'resize-download-btn':
+                        if (!resizeImageData) return;
+                        const w = parseInt(document.getElementById('resize-width').value);
+                        const h = parseInt(document.getElementById('resize-height').value);
+                        const dpiToggle = document.getElementById('resize-dpi-slider').value === '1';
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w;
+                        canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(resizeImageData, 0, 0, w, h);
+
+                        canvas.toBlob(async blob => {
+                            const buffer = await blob.arrayBuffer();
+                            const uint8 = new Uint8Array(buffer);
+                            if (dpiToggle && blob.type === 'image/png') {
+                                const dpiChunk = create300DPIChunk(300);
+                                const final = insertDPIIntoPNG(uint8, dpiChunk);
+                                const a = document.createElement('a');
+                                a.download = 'resized-300dpi.png';
+                                a.href = URL.createObjectURL(new Blob([final], { type: 'image/png' }));
+                                a.click();
+                            } else {
+                                const a = document.createElement('a');
+                                a.download = 'resized-image.png';
+                                a.href = URL.createObjectURL(blob);
+                                a.click();
+                            }
+                        }, 'image/png');
+                        break;
                 }
                 if (targetEl.classList.contains('niche-copy-btn')) { copyToClipboard(targetEl.dataset.keyword, targetEl, 'Copy'); }
             }
@@ -324,6 +381,22 @@
              else if (targetId === 'editor-file-input') handleImageUpload(e);
              else if (targetId === 'eraser-file-input') handleEraserUpload(e);
              else if (targetId === 'md-modal-instructions-select') loadSelectedInstruction();
+             else if (targetId === 'resize-file-input') {
+                 const file = e.target.files[0];
+                 if (!file) return;
+                 const reader = new FileReader();
+                 reader.onload = function (event) {
+                     const img = new Image();
+                     img.onload = function () {
+                         resizeImageData = img;
+                         document.getElementById('resize-file-status').textContent = file.name;
+                         document.getElementById('resize-width').value = img.width;
+                         document.getElementById('resize-height').value = img.height;
+                     };
+                     img.src = event.target.result;
+                 };
+                 reader.readAsDataURL(file);
+             }
              else syncToStorage();
         });
         document.body.addEventListener('input', function(e) {
@@ -341,8 +414,20 @@
                 eraserBrushSize = parseInt(target.value, 10);
                 document.getElementById('eraser-brush-size-value').textContent = target.value;
             }
+            if (target.id === 'resize-dpi-slider') {
+                 const isEnabled = target.value === '1';
+                 document.getElementById('resize-dpi-value').textContent = isEnabled ? 'Yes' : 'No';
+                 target.style.backgroundColor = isEnabled ? '#28a745' : '#cccccc';
+            }
             syncToStorage();
         });
+
+        // Set initial state for DPI toggle
+        const dpiSlider = document.getElementById('resize-dpi-slider');
+        if(dpiSlider) {
+            const isEnabled = dpiSlider.value === '1';
+            dpiSlider.style.backgroundColor = isEnabled ? '#28a745' : '#cccccc';
+        }
     }
 
     // --- POPOUT & WORKFLOW LOGIC ---
@@ -565,6 +650,62 @@
         makeResizable = function(element, handle) { if (!element || !handle) return; handle.addEventListener('mousedown', function(e) { e.preventDefault(); let startX = e.clientX, startY = e.clientY, startWidth = parseInt(getComputedStyle(element).width), startHeight = parseInt(getComputedStyle(element).height); const doDrag = de => { let newWidth = startWidth + de.clientX - startX; let newHeight = startHeight + de.clientY - startY; if (newWidth > 400) element.style.width = newWidth + 'px'; if (newHeight > 300) element.style.height = newHeight + 'px'; }; const stopDrag = () => { document.documentElement.removeEventListener('mousemove', doDrag, false); document.documentElement.removeEventListener('mouseup', stopDrag, false); }; document.documentElement.addEventListener('mousemove', doDrag, false); document.documentElement.addEventListener('mouseup', stopDrag, false); }); };
     })();
 
+    // --- DPI Helper Functions (moved to accessible scope) ---
+    function create300DPIChunk(dpi) {
+        const pxPerMeter = Math.round(dpi * 39.3701);
+        const data = new Uint8Array([
+            (pxPerMeter >> 24) & 0xff, (pxPerMeter >> 16) & 0xff,
+            (pxPerMeter >> 8) & 0xff, pxPerMeter & 0xff,
+            (pxPerMeter >> 24) & 0xff, (pxPerMeter >> 16) & 0xff,
+            (pxPerMeter >> 8) & 0xff, pxPerMeter & 0xff,
+            1 // unit = meter
+        ]);
+        return createPNGChunk('pHYs', data);
+    }
+    function createPNGChunk(type, data) {
+        const crcTable = [];
+        for (let n = 0; n < 256; n++) {
+            let c = n;
+            for (let k = 0; k < 8; k++) {
+                c = ((c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1));
+            }
+            crcTable[n] = c;
+        }
+        function crc32(buf) {
+            let crc = 0xffffffff;
+            for (let i = 0; i < buf.length; i++) {
+                crc = crcTable[(crc ^ buf[i]) & 0xff] ^ (crc >>> 8);
+            }
+            return (crc ^ 0xffffffff) >>> 0;
+        }
+        const typeBytes = Array.from(type).map(c => c.charCodeAt(0));
+        const chunkData = new Uint8Array([...typeBytes, ...data]);
+        const crc = crc32(chunkData);
+        const result = new Uint8Array(12 + data.length);
+        const length = data.length;
+        result[0] = (length >> 24) & 0xff;
+        result[1] = (length >> 16) & 0xff;
+        result[2] = (length >> 8) & 0xff;
+        result[3] = length & 0xff;
+        result.set(typeBytes, 4);
+        result.set(data, 8);
+        result.set([
+            (crc >> 24) & 0xff, (crc >> 16) & 0xff,
+            (crc >> 8) & 0xff, crc & 0xff
+        ], 8 + length);
+        return result;
+    }
+    function insertDPIIntoPNG(png, chunk) {
+        const head = png.slice(0, 33);
+        const tail = png.slice(33);
+        const newPng = new Uint8Array(head.length + chunk.length + tail.length);
+        newPng.set(head, 0);
+        newPng.set(chunk, head.length);
+        newPng.set(tail, head.length + chunk.length);
+        return newPng;
+    }
+
+
     // --- CSS STYLES ---
     GM_addStyle(`
         #md-enhancer { position: fixed; top: 100px; right: 20px; min-width: 460px; max-width: 90vw; min-height: 650px; max-height: 90vh; resize: none; overflow: hidden; background: #ffffff; color: #000000; border-radius: 10px; padding: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); z-index: 10000; transition: right 0.3s ease, opacity 0.3s ease; opacity: 0; display: flex; flex-direction: column; }
@@ -609,7 +750,7 @@
         .niche-copy-btn:hover { background-color: #5a6268 !important; }
         .file-input-label { display: block; width: 100%; padding: 6px; border-radius: 5px; background: #28a745; color: white; font-size: 13px; cursor: pointer; text-align: center; transition: background-color 0.2s; margin-bottom: 5px; }
         .file-input-label:hover { background: #218838; }
-        #describer-file-status { text-align: center; font-size: 12px; color: #555; height: 16px; margin-bottom: 10px; }
+        #describer-file-status, #resize-file-status { text-align: center; font-size: 12px; color: #555; height: 16px; margin-bottom: 10px; }
         #describer-status { text-align: center; margin-top: 5px; font-size: 13px; height: 16px; margin-bottom: 10px; }
         .settings-link { color: #1e7e34; text-decoration: none; display: block; text-align: center; margin: 2px 0 8px 0; font-size: 12px; }
         .settings-link:hover { text-decoration: underline; }
@@ -638,7 +779,7 @@
         .editor-buttons-row button { margin: 0; }
 
         /* Slider Styles */
-        .md-popout-window input[type="range"] {
+        input[type="range"] {
             -webkit-appearance: none;
             appearance: none;
             width: 100%;
@@ -649,7 +790,7 @@
             padding: 0;
             margin-bottom: 10px;
         }
-        .md-popout-window input[type="range"]::-webkit-slider-thumb {
+        input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             width: 18px;
@@ -658,13 +799,36 @@
             cursor: pointer;
             border-radius: 50%;
         }
-        .md-popout-window input[type="range"]::-moz-range-thumb {
+        input[type="range"]::-moz-range-thumb {
             width: 18px;
             height: 18px;
             background: #28a745;
             cursor: pointer;
             border-radius: 50%;
             border: none;
+        }
+        #resize-dpi-slider {
+             width: 44px !important;
+             height: 24px !important;
+             padding: 0 !important;
+             border-radius: 12px !important;
+             background-color: #cccccc;
+             position: relative;
+             vertical-align: middle;
+             transition: background-color 0.2s ease;
+             margin-bottom: 0 !important;
+        }
+        #resize-dpi-slider::-webkit-slider-thumb {
+             width: 20px;
+             height: 20px;
+             background: #fff;
+             border: 1px solid #ccc;
+        }
+        #resize-dpi-slider::-moz-range-thumb {
+             width: 20px;
+             height: 20px;
+             background: #fff;
+             border: 1px solid #ccc;
         }
 
         /* Modal Styles */
