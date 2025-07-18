@@ -4,29 +4,58 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lavender Dragon Enhancer v. 24</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons CDN -->
+  <script type="module">
+    import { createIcons, icons } from "https://unpkg.com/lucide@latest/dist/esm/lucide.js";
+    window.addEventListener("DOMContentLoaded", () => createIcons({ icons }));
+  </script>
 </head>
 <body class="bg-slate-900 text-white font-sans p-6">
 
   <div class="max-w-xl mx-auto text-center">
-    <h1 class="text-4xl font-bold mb-4">🧠 Lavender Dragon Enhancer v. 24</h1>
+    <h1 class="text-4xl font-bold mb-4 flex items-center justify-center gap-2">
+      <i data-lucide="brain" class="w-8 h-8 text-green-400"></i> Lavender Dragon Enhancer v. 24
+    </h1>
     <p class="text-lg text-gray-300 mb-6">
       Supercharge <span class="font-semibold">MyDesigns.io</span> with AI tools, profit calculator, niche research, and a zoomable image editor. No fluff — just pure workflow magic.
     </p>
 
     <div class="bg-slate-800 p-4 rounded-xl shadow mb-6 text-left">
-      <h2 class="text-2xl font-semibold mb-2">✨ Features</h2>
-      <ul class="list-disc list-inside text-gray-300 space-y-1">
-        <li>🧠 Custom Instructions Manager to Copy / Paste repeated instructions</li>
-        <li>💰 Etsy Profit Calculator with Etsy Fees</li>
-        <li>📁 Keywords tab with Niche Research</li>
-        <li>🖼️ Pop-out Image Editor (zoom, eraser, pan, save/discard)</li>
-        <li>🖼️ Image Describer: Generates titles, tags, and SEO using AI</li>
+      <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2 text-green-300">
+        <i data-lucide="sparkles" class="w-6 h-6"></i> Features
+      </h2>
+      <ul class="list-none space-y-3 text-gray-300">
+        <li class="flex items-start gap-2">
+          <i data-lucide="clipboard-edit" class="w-5 h-5 text-white mt-1"></i>
+          <span>Custom Instructions Manager to Copy / Paste repeated instructions</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="calculator" class="w-5 h-5 text-white mt-1"></i>
+          <span>Etsy Profit Calculator with Etsy Fees</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="search" class="w-5 h-5 text-white mt-1"></i>
+          <span>Keywords tab with Niche Research</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="crop" class="w-5 h-5 text-white mt-1"></i>
+          <span>Pop-out Image Editor (zoom, eraser, pan, save/discard)</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="image-plus" class="w-5 h-5 text-white mt-1"></i>
+          <span>Image Describer: Generates titles, tags, and SEO using AI</span>
+        </li>
       </ul>
     </div>
 
     <div class="bg-slate-800 p-4 rounded-xl shadow mb-6 text-left">
-      <h2 class="text-xl font-semibold text-green-400 mb-2">🔑 Gemini API Key Required</h2>
+      <h2 class="text-xl font-semibold text-green-400 mb-2 flex items-center gap-2">
+        <i data-lucide="key-round" class="w-5 h-5"></i> Gemini API Key Required
+      </h2>
       <p class="text-gray-300 mb-2">
         The Image Describer feature requires a free <strong>Google Gemini API key</strong>. This key is unique to you and never shared — it protects your privacy and ensures personalized results.
       </p>
@@ -51,4 +80,3 @@
   </div>
 </body>
 </html>
-
