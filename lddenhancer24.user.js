@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        LavenderDragonDesign Enhancer
 // @namespace   http://tampermonkey.net/
-// @version     24.13 // Added Resizer @ 300DPI.
+// @version     24.29 // FIX: Re-integrated 300 DPI functionality into the Resizer tab with presets.
 // @description The definitive, stable version. Powerful keyword tool with Etsy trends and a high-performance image editor.
 // @match       https://mydesigns.io/app/*
 // @grant       GM_addStyle
@@ -109,6 +109,7 @@
             <div class="tab-content" id="niche-tab" style="display:none;"></div>
             <div class="tab-content" id="describer-tab" style="display:none;"></div>
             <div class="tab-content" id="profit-tab" style="display:none;"></div>
+            <div class="tab-content" id="resize-tab" style="display:none;"></div>
             <div class="tab-content" id="settings-tab" style="display:none;"></div>
             <div class="enhancer-footer">
                 <small>Powered by LavenderDragonDesign</small>
@@ -209,37 +210,43 @@
         const visionTabHTML = `<h3 class="niche-h3" style="margin-bottom:5px;">Custom Instructions Generator</h3><small class="md-hint">Generate Preset Prompts for Vision AI Custom Instructions Box. 💡 Tip: Make sure the Custom Instructions box is open in before pasting</small><label>Enter Main Keyword:</label><input type="text" id="md-main-word" placeholder="e.g. Halloween, Retro Floral" /><label>Product Type:</label><select id="md-product-type"><option value="PNG">PNG</option><option value="SVG">SVG</option><option value="Tumbler Wrap">Tumbler Wrap</option><option value="Mug Wrap">Mug Wrap</option></select><label>Custom Type (optional):</label><input type="text" id="md-custom-type" placeholder="e.g. Wall Art" /><button id="md-generate">Generate</button><button id="md-copy">Copy Generated</button><label>Output:</label><textarea id="md-result" rows="3" readonly></textarea><button id="md-paste">Paste Generated to Vision AI</button><hr class="section-divider"><h3 class="niche-h3" style="margin-bottom:5px;">Your Custom Instructions</h3><small class="md-hint" style="margin-bottom: 8px;">💡 Tip: Make sure the Custom Instructions box is open in before opening</small><button id="md-manage-instructions-btn">Open Saved Custom Instructions Manager</button>`;
         const profitTabHTML = `<small class="md-hint">Enter your data and click the button to calculate all results. These are all estimated. They may not be perfectly accurate.</small><div class="profit-section"><h3>Your Sales</h3><div class="pc-input-row"><label for="pc-sale-price">Sale Price ($):</label><input type="number" id="pc-sale-price" value="10.00" min="0" step="0.01" /></div><div class="pc-input-row"><label for="pc-shipping-price-customer">Shipping Charged ($):</label><input type="number" id="pc-shipping-price-customer" value="0.00" min="0" step="0.01" /></div><div class="pc-input-row"><label for="pc-item-quantity">Item Quantity:</label><input type="number" id="pc-item-quantity" value="1" min="1" step="1" /></div><label>Discount:</label><div class="pc-cost-toggle"><input type="number" id="pc-discount-value" value="0.00" min="0" step="0.01" /><select id="pc-discount-type"><option value="flat">$</option><option value="percent">%</option></select></div></div><div class="profit-section"><h3>Your Costs</h3><div class="pc-input-row"><label for="pc-cost-per-item">Cost per Item ($):</label><input type="number" id="pc-cost-per-item" value="5.00" min="0" step="0.01" /></div><div class="pc-input-row"><label for="pc-actual-shipping-cost">Actual Shipping Cost ($):</label><input type="number" id="pc-actual-shipping-cost" value="0.00" min="0" step="0.01" /></div><div class="pc-input-row"><label for="pc-listing-fee">Etsy Listing Fee ($):</label><input type="number" id="pc-listing-fee" value="0.20" min="0" step="0.01" /></div><label>Payment Processing Fee:</label><span class="md-hint" style="margin-top: -4px;">3% + $0.25</span><div class="pc-input-row"><label for="pc-transaction-fee-percent">Etsy Transaction Fee (%):</label><input type="number" id="pc-transaction-fee-percent" value="6.5" min="0" step="0.1" /></div><label>Advertising Cost:</label><div class="pc-cost-toggle"><input type="number" id="pc-advertising-cost" value="0.00" min="0" step="0.01" /><select id="pc-advertising-type"><option value="percent">%</option><option value="flat">$</option></select></div><label>Misc. Costs:</label><div class="pc-cost-toggle"><input type="number" id="pc-misc-cost" value="0.00" min="0" step="0.01" /><select id="pc-misc-type"><option value="percent">%</option><option value="flat">$</option></select></div></div><div class="profit-section"><h3>Results & Goal</h3><div class="pc-input-row"><label for="pc-goal-value">Goal Net Profit ($):</label><input type="number" id="pc-goal-value" value="5.00" min="0" step="0.01" /></div><button id="pc-calculate-btn">Calculate Results & Suggested Price</button><p class="pc-result-line"><strong>Suggested Sale Price:</strong> <span id="pc-suggested-sale-price">$0.00</span></p><hr><p class="pc-result-line"><strong>Proceeds:</strong> <span id="pc-proceeds">$0.00</span></p><p class="pc-result-line"><strong>Total Costs:</strong> <span id="pc-total-costs">$0.00</span></p><p class="pc-result-line"><strong>Net Profit:</strong> <span id="pc-net-profit">$0.00</span></p><p class="pc-result-line"><strong>Return:</strong> <span id="pc-return">0.00%</span></p><p class="pc-result-line"><strong>Margin:</strong> <span id="pc-margin">0.00%</span></p></div>`;
         const nicheTabHTML = `<h3 class="niche-h3">POD Keyword & Trend Finder</h3><small class="md-hint">Finds Etsy trends, product-specific keywords, and long-tail ideas.</small><label for="niche-keyword">Main Design Subject:</label><input type="text" id="niche-keyword" placeholder="e.g., watercolor cat, retro floral" /><button id="niche-generate-keywords">Generate Listing Keywords</button><div id="niche-status" style="margin-top: 10px; text-align: center;"></div><div id="niche-results-container"></div>`;
+        const resizeTabHTML = `
+          <h3 class="niche-h3">Image Resizer</h3>
+          <small class="md-hint">Resize your PNG or JPG images using presets or custom dimensions.</small>
+          <label for="resize-file-input" class="file-input-label">Choose an Image</label>
+          <input type="file" id="resize-file-input" accept="image/png, image/jpeg" style="display:none;">
+          <div id="resize-file-status">No file selected.</div>
+
+          <h4 class="niche-h3" style="font-size: 14px; margin-top: 15px; margin-bottom: 5px;">Recommended Sizes</h4>
+          <div class="preset-grid">
+              <button class="preset-btn" data-width="4500" data-height="5400"><b>POD Default</b><br>4500x5400</button>
+              <button class="preset-btn" data-width="2790" data-height="2460"><b>Tumbler Wrap</b><br>2790x2460</button>
+              <button class="preset-btn" data-width="1024" data-height="1024"><b>Square</b><br>1024x1024</button>
+              <button class="preset-btn" data-width="2000" data-height="1500"><b>Standard Mockup</b><br>2000x1500</button>
+              <button class="preset-btn" data-width="2625" data-height="1050"><b>11oz Mug (SwiftPOD)</b><br>2625x1050</button>
+              <button class="preset-btn" data-width="2475" data-height="1156"><b>11oz Mug (District)</b><br>2475x1156</button>
+          </div>
+
+          <h4 class="niche-h3" style="font-size: 14px; margin-top: 15px; margin-bottom: 5px;">Custom Size & Options</h4>
+          <label for="resize-width">Width (px):</label>
+          <input type="number" id="resize-width" min="1" />
+          <label for="resize-height">Height (px):</label>
+          <input type="number" id="resize-height" min="1" />
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <label for="resize-dpi-slider" style="margin: 0;">Force 300 DPI (PNG):</label>
+            <input type="range" id="resize-dpi-slider" min="0" max="1" value="1" />
+            <span id="resize-dpi-value">Yes</span>
+          </div>
+          <button id="resize-download-btn">Download Resized Image</button>
+        `;
         mainWrapper.querySelector('#editor-tab').innerHTML = editorTabHTML;
         mainWrapper.querySelector('#erase-tab').innerHTML = eraseTabHTML;
         mainWrapper.querySelector('#describer-tab').innerHTML = describerTabHTML;
         mainWrapper.querySelector('#vision-tab').innerHTML = visionTabHTML;
         mainWrapper.querySelector('#profit-tab').innerHTML = profitTabHTML;
         mainWrapper.querySelector('#niche-tab').innerHTML = nicheTabHTML;
+        mainWrapper.querySelector('#resize-tab').innerHTML = resizeTabHTML;
         mainWrapper.querySelector('#settings-tab').innerHTML = settingsTabHTML;
-
-        // Inject Resize Tab
-        const resizeTabHTML = `
-          <h3 class="niche-h3">Image Resizer @ 300 DPI</h3>
-          <small class="md-hint">Resize your PNG or JPG images. 300 DPI will be applied to PNGs if enabled.</small>
-          <label for="resize-file-input" class="file-input-label">Choose an Image</label>
-          <input type="file" id="resize-file-input" accept="image/png, image/jpeg" style="display:none;">
-          <div id="resize-file-status">No file selected.</div>
-          <label for="resize-width">Width (px):</label>
-          <input type="number" id="resize-width" value="3000" min="1" />
-          <label for="resize-height">Height (px):</label>
-          <input type="number" id="resize-height" value="3000" min="1" />
-          <label for="resize-dpi-slider">Force 300 DPI: <span id="resize-dpi-value">Yes</span></label>
-          <input type="range" id="resize-dpi-slider" min="0" max="1" value="1" />
-          <button id="resize-download-btn">Download Resized Image</button>
-        `;
-
-        const resizeDiv = document.createElement('div');
-        resizeDiv.id = 'resize-tab';
-        resizeDiv.className = 'tab-content';
-        resizeDiv.style.display = 'none';
-        resizeDiv.innerHTML = resizeTabHTML;
-        // Insert before the settings tab content div
-        mainWrapper.insertBefore(resizeDiv, mainWrapper.querySelector('#settings-tab'));
     }
 
     // --- EVENT LISTENERS ---
@@ -250,6 +257,29 @@
         document.body.addEventListener('click', function(e) {
             const targetEl = e.target;
             const targetId = targetEl.id;
+
+            // Preset Button Handler
+            if (targetEl.classList.contains('preset-btn')) {
+                const widthInput = document.getElementById('resize-width');
+                const heightInput = document.getElementById('resize-height');
+                const allPresets = document.querySelectorAll('.preset-btn');
+
+                if (targetEl.classList.contains('active')) {
+                    // If it's already active, deactivate it and clear inputs
+                    targetEl.classList.remove('active');
+                    widthInput.value = '';
+                    heightInput.value = '';
+                } else {
+                    // Deactivate all others
+                    allPresets.forEach(btn => btn.classList.remove('active'));
+                    // Activate the clicked one
+                    targetEl.classList.add('active');
+                    // Set input values
+                    widthInput.value = targetEl.dataset.width;
+                    heightInput.value = targetEl.dataset.height;
+                }
+                return;
+            }
 
             // Main UI Toggle & Close
             if (targetEl.closest('#md-toggle-wrapper')) { document.getElementById('md-enhancer')?.classList.toggle('visible'); document.getElementById('md-enhancer')?.classList.toggle('hidden'); return; }
@@ -327,9 +357,16 @@
                     case 'settings-save-gemini-btn': saveGeminiApiKey(); break;
                     case 'md-manage-instructions-btn': openInstructionsModal(); break;
                     case 'resize-download-btn':
-                        if (!resizeImageData) return;
+                        if (!resizeImageData) {
+                             showCustomModal({title: "No Image", message: "Please choose an image to resize.", type: "alert"});
+                             return;
+                        }
                         const w = parseInt(document.getElementById('resize-width').value);
                         const h = parseInt(document.getElementById('resize-height').value);
+                         if (!w || !h || w < 1 || h < 1) {
+                            showCustomModal({title: "Invalid Dimensions", message: "Please enter a valid width and height.", type: "alert"});
+                            return;
+                        }
                         const dpiToggle = document.getElementById('resize-dpi-slider').value === '1';
 
                         const canvas = document.createElement('canvas');
@@ -339,20 +376,25 @@
                         ctx.drawImage(resizeImageData, 0, 0, w, h);
 
                         canvas.toBlob(async blob => {
-                            const buffer = await blob.arrayBuffer();
-                            const uint8 = new Uint8Array(buffer);
+                            const originalFileName = document.getElementById('resize-file-status').textContent.replace(/\.[^/.]+$/, "");
+                            const downloadName = `${originalFileName}-resized.png`;
+
                             if (dpiToggle && blob.type === 'image/png') {
+                                const buffer = await blob.arrayBuffer();
+                                const uint8 = new Uint8Array(buffer);
                                 const dpiChunk = create300DPIChunk(300);
                                 const final = insertDPIIntoPNG(uint8, dpiChunk);
                                 const a = document.createElement('a');
-                                a.download = 'resized-300dpi.png';
+                                a.download = downloadName;
                                 a.href = URL.createObjectURL(new Blob([final], { type: 'image/png' }));
                                 a.click();
+                                URL.revokeObjectURL(a.href);
                             } else {
                                 const a = document.createElement('a');
-                                a.download = 'resized-image.png';
+                                a.download = downloadName;
                                 a.href = URL.createObjectURL(blob);
                                 a.click();
+                                URL.revokeObjectURL(a.href);
                             }
                         }, 'image/png');
                         break;
@@ -390,8 +432,6 @@
                      img.onload = function () {
                          resizeImageData = img;
                          document.getElementById('resize-file-status').textContent = file.name;
-                         document.getElementById('resize-width').value = img.width;
-                         document.getElementById('resize-height').value = img.height;
                      };
                      img.src = event.target.result;
                  };
@@ -419,6 +459,9 @@
                  document.getElementById('resize-dpi-value').textContent = isEnabled ? 'Yes' : 'No';
                  target.style.backgroundColor = isEnabled ? '#28a745' : '#cccccc';
             }
+            if (target.id === 'resize-width' || target.id === 'resize-height') {
+                document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+            }
             syncToStorage();
         });
 
@@ -436,7 +479,6 @@
         const otherType = type === 'editor' ? 'eraser' : 'editor';
         const otherPopout = document.getElementById(`md-${otherType}-popout`);
 
-        // If the other popout is open with changes, prompt before switching
         if (otherPopout.style.display === 'flex' && activePopout.hasChanges && activePopout.type === otherType) {
              handlePopoutClose(activePopout.type, () => {
                  otherPopout.style.display = 'none';
@@ -500,7 +542,6 @@
         function setupPanZoom(canvas, panZoomState, onUserInteraction, toolType) {
             const container = canvas.parentElement;
 
-            // CRITICAL FIX: getMousePos must use the container's rect, not the transformed canvas rect.
             const getMousePos = (e) => {
                 const rect = container.getBoundingClientRect();
                 return { x: e.clientX - rect.left, y: e.clientY - rect.top };
@@ -830,6 +871,13 @@
              background: #fff;
              border: 1px solid #ccc;
         }
+
+        /* Preset Grid Styles */
+        .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .preset-btn { background-color: #f0f0f0 !important; color: #333 !important; border: 2px solid #e0e0e0; padding: 10px; text-align: center; font-size: 13px; line-height: 1.3; transition: all 0.2s ease; }
+        .preset-btn:hover { background-color: #e0e0e0 !important; border-color: #ccc; }
+        .preset-btn.active { background-color: #e6f6e9 !important; border-color: #28a745 !important; color: #218838 !important; }
+        .preset-btn b { pointer-events: none; }
 
         /* Modal Styles */
         #md-manager-modal-backdrop, #md-generic-modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 10003; display: flex; justify-content: center; align-items: center; }
