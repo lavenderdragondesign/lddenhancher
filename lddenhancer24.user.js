@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        LavenderDragonDesign Enhancer
 // @namespace   http://tampermonkey.net/
-// @version     24.11 // CRITICAL FIX: Fixed coordinate system mismatch in Pan/Zoom causing eraser misalignment.
+// @version     24.12 // CRITICAL FIX: Fixed Profit calc.
 // @description The definitive, stable version. Powerful keyword tool with Etsy trends and a high-performance image editor.
 // @match       https://mydesigns.io/app/*
 // @grant       GM_addStyle
