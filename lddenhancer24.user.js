@@ -150,7 +150,7 @@
                 <div class="enhancer-header" id="md-eraser-popout-drag-handle">Erase Tool</div>
                  <div class="popout-main-content">
                     <div class="popout-controls-panel">
-                        <h3 class="niche-h3">Eraser / BG Remover</h3>
+                        <h3 class="niche-h3">Erase Tool (BETA)</h3>
                         <p class="md-hint">Upload an image, then click and drag to erase.</p>
                         <label for="eraser-file-input" class="file-input-label">Choose an Image</label>
                         <input type="file" id="eraser-file-input" accept="image/png, image/jpeg" style="display:none;">
