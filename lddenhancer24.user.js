@@ -92,7 +92,7 @@
         wrapper.id = 'md-enhancer'; wrapper.classList.add('hidden');
         wrapper.innerHTML = `
             <img id="md-close" src="${closeIconURL}" alt="Close" title="Close" />
-            <div class="enhancer-header" id="md-drag-handle"><div class="header-title">🧠 LavenderDragonDesign's Enhancer v.24.11</div></div>
+            <div class="enhancer-header" id="md-drag-handle"><div class="header-title">🧠 LavenderDragonDesign's Enhancer v.24</div></div>
             <div class="tab-header">
                 <div class="tab" data-tab="vision">Custom Instructions</div>
                 <div class="tab" data-tab="editor">Image Editor</div>
