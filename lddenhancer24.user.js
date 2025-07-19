@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        LavenderDragonDesign Enhancer
 // @namespace   http://tampermonkey.net/
-// @version     24.989 // UPDATED IMAGE DESCRIBER MODEL TO BE FASTER WITH OCR
+// @version     24.99 // UPDATED IMAGE DESCRIBER MODEL TO BE FASTER WITH OCR
 // @description The definitive, stable version. Powerful keyword tool with Etsy trends and a high-performance image editor.
 // @match       https://mydesigns.io/app/*
 // @grant       GM_addStyle
@@ -13,19 +13,8 @@
 // @connect     allorigins.win
 // ==/UserScript==
 
-
 (function () {
     'use strict';
-
-
-const greenCheckboxStyle = document.createElement('style');
-greenCheckboxStyle.textContent = `
-  #resize-dpi-toggle {
-    accent-color: #22c55e !important;
-  }
-`;
-document.head.appendChild(greenCheckboxStyle);
-
 
 
     // Asynchronously load Tesseract.js with a global ready promise
@@ -258,14 +247,7 @@ document.head.appendChild(greenCheckboxStyle);
           <input type="number" id="resize-width" min="1" />
           <label for="resize-height">Height (px):</label>
           <input type="number" id="resize-height" min="1" />
-
-
-<div style="display: flex; flex-direction: column; align-items: center; font-weight: bold; font-size: 2rem;">
-  <label for="resize-dpi-toggle">Force 300 DPI (PNG)</label>
-  <input type="checkbox" id="resize-dpi-toggle">
-</div>
-
-
+          <div class="toggle-switch-container"><label for="resize-dpi-toggle" style="margin: 0;">Force 300 DPI (PNG):</label><input type="checkbox" id="resize-dpi-toggle" class="toggle-switch" checked></div>
           <button id="resize-download-btn">Download Resized Image</button>
         `;
         mainWrapper.querySelector('#editor-tab').innerHTML = editorTabHTML;
@@ -892,3 +874,5 @@ document.head.appendChild(greenCheckboxStyle);
         .modal-manage-btn:hover { background-color: #5a6268 !important; }
         .modal-secondary-btn { background-color: #6c757d !important; }
         .modal-secondary-btn:hover { background-color: #5a6268 !important; }
+    `);
+})();
