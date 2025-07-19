@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        LavenderDragonDesign Enhancer
 // @namespace   http://tampermonkey.net/
-// @version     24.30 // CRITICAL FIX: Resize 300 dpi.
+// @version     24.99 // UPDATED IMAGE DESCRIBER MODEL TO BE FASTER WITH OCR
 // @description The definitive, stable version. Powerful keyword tool with Etsy trends and a high-performance image editor.
 // @match       https://mydesigns.io/app/*
 // @grant       GM_addStyle
@@ -15,6 +15,21 @@
 
 (function () {
     'use strict';
+
+
+    // Asynchronously load Tesseract.js with a global ready promise
+    window.TesseractReady = new Promise((resolve, reject) => {
+        if (window.Tesseract) return resolve(window.Tesseract);
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js';
+        script.onload = () => {
+            console.log('🔍 Tesseract.js loaded safely.');
+            resolve(window.Tesseract);
+        };
+        script.onerror = () => reject(new Error("Failed to load Tesseract.js"));
+        document.head.appendChild(script);
+    });
+
 
     // --- GLOBALS ---
     let describerImageFile = null;
@@ -162,7 +177,7 @@
                              <input type="range" id="eraser-brush-size-slider" min="1" max="200" value="30">
                              <div class="editor-buttons-row">
                                 <button id="eraser-reset-btn">Reset Image</button>
-                                <button id="eraser-download-btn">Download PNG</button>
+                                <button id="eraser-download-btn">Download Erased PNG</button>
                             </div>
                         </div>
                     </div>
@@ -232,17 +247,7 @@
           <input type="number" id="resize-width" min="1" />
           <label for="resize-height">Height (px):</label>
           <input type="number" id="resize-height" min="1" />
-
-
-<div class="toggle-switch-container">
-  <label class="switch">
-    <input type="checkbox" id="resize-dpi-toggle" checked>
-    <span class="slider"></span>
-    <span class="toggle-label">Force 300 DPI (PNG)</span>
-  </label>
-</div>
-
-
+          <div class="toggle-switch-container"><label for="resize-dpi-toggle" style="margin: 0;">Force 300 DPI (PNG):</label><input type="checkbox" id="resize-dpi-toggle" class="toggle-switch" checked></div>
           <button id="resize-download-btn">Download Resized Image</button>
         `;
         mainWrapper.querySelector('#editor-tab').innerHTML = editorTabHTML;
@@ -869,128 +874,5 @@
         .modal-manage-btn:hover { background-color: #5a6268 !important; }
         .modal-secondary-btn { background-color: #6c757d !important; }
         .modal-secondary-btn:hover { background-color: #5a6268 !important; }
-
-.toggle-switch-container .dpi-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  border-radius: 5px;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.toggle-switch-container input[type="checkbox"]:checked {
-  background-color: #28a745;
-  border: 1px solid #28a745;
-  color: white;
-}
-
-/* Custom Toggle Switch Styles */
-.switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  user-select: none;
-}
-
-.switch input {
-  display: none;
-}
-
-.slider {
-  width: 40px;
-  height: 20px;
-  background-color: #ccc;
-  border-radius: 20px;
-  position: relative;
-  transition: background-color 0.2s;
-}
-
-.slider::before {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  left: 2px;
-  top: 2px;
-  background-color: white;
-  border-radius: 50%;
-  transition: transform 0.2s;
-}
-
-.switch input:checked + .slider {
-  background-color: #28a745;
-}
-
-.switch input:checked + .slider::before {
-  transform: translateX(20px);
-}
-
-.toggle-label {
-  font-size: 14px;
-  color: white;
-}
-
-/* FORCE GREEN DPI TOGGLE WITH FULL VISIBILITY */
-.toggle-switch-container {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background-color: #1e2a3a;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.switch {
-  display: inline-flex !important;
-  align-items: center;
-  gap: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  user-select: none;
-  color: white;
-}
-
-.switch input {
-  display: none !important;
-}
-
-.slider {
-  width: 40px;
-  height: 20px;
-  background-color: #ccc;
-  border-radius: 20px;
-  position: relative;
-  transition: background-color 0.2s;
-  flex-shrink: 0;
-}
-
-.slider::before {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  left: 2px;
-  top: 2px;
-  background-color: white;
-  border-radius: 50%;
-  transition: transform 0.2s;
-}
-
-.switch input:checked + .slider {
-  background-color: #28a745 !important;
-}
-
-.switch input:checked + .slider::before {
-  transform: translateX(20px);
-}
-
-.toggle-label {
-  font-size: 14px;
-  color: white;
-}
-`);
+    `);
 })();
