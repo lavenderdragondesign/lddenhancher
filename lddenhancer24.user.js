@@ -17,6 +17,16 @@
     'use strict';
 
 
+const greenCheckboxStyle = document.createElement('style');
+greenCheckboxStyle.textContent = `
+  #resize-dpi-toggle {
+    accent-color: #22c55e !important;
+  }
+`;
+document.head.appendChild(greenCheckboxStyle);
+
+
+
     // Asynchronously load Tesseract.js with a global ready promise
     window.TesseractReady = new Promise((resolve, reject) => {
         if (window.Tesseract) return resolve(window.Tesseract);
@@ -247,7 +257,14 @@
           <input type="number" id="resize-width" min="1" />
           <label for="resize-height">Height (px):</label>
           <input type="number" id="resize-height" min="1" />
-          <div class="toggle-switch-container"><label for="resize-dpi-toggle" style="margin: 0;">Force 300 DPI (PNG):</label><input type="checkbox" id="resize-dpi-toggle" class="toggle-switch" checked></div>
+
+
+<div style="display: flex; flex-direction: column; align-items: center; font-weight: bold; font-size: 1rem;">
+  <label for="resize-dpi-toggle">Force 300 DPI (PNG)</label>
+  <input type="checkbox" id="resize-dpi-toggle">
+</div>
+
+
           <button id="resize-download-btn">Download Resized Image</button>
         `;
         mainWrapper.querySelector('#editor-tab').innerHTML = editorTabHTML;
