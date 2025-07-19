@@ -162,7 +162,7 @@
                              <input type="range" id="eraser-brush-size-slider" min="1" max="200" value="30">
                              <div class="editor-buttons-row">
                                 <button id="eraser-reset-btn">Reset Image</button>
-                                <button id="eraser-download-btn">Download Erased PNG</button>
+                                <button id="eraser-download-btn">Download PNG</button>
                             </div>
                         </div>
                     </div>
