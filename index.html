@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,12 +22,52 @@
       </p>
     </div>
 
-    <!-- ... All your setup steps ... -->
+    <!-- Step 1 -->
+    <div class="bg-slate-800 p-6 rounded-xl shadow mb-10 border border-slate-700">
+      <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2 text-green-300">
+        <i class="w-6 h-6" data-lucide="sparkles"></i> Features
+      </h2>
+      <ul class="list-disc pl-5 space-y-2 text-gray-300 text-lg">
+        <li>Custom Instructions Manager to Copy / Paste repeated instructions</li>
+        <li>Etsy Profit Calculator with Etsy Fees</li>
+        <li>Image Resizer at 300 DPI</li>
+        <li>Keywords tab with Niche Research</li>
+        <li>Pop-out Image Editor (zoom, eraser, pan, save/discard)</li>
+        <li>Image Describer: Generates tags, descriptions from images using AI</li>
+      </ul>
+    </div>
+
+    <div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+      <h3 class="text-3xl font-bold text-green-300 mb-4">Step 1: Create Your Gemini API Key</h3>
+      <p class="text-lg text-gray-300 mb-6">Go to Google AI Studio and click 'Create API key'.</p>
+      <div class="text-center mt-6">
+        <a class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-5 rounded-lg transition" href="https://aistudio.google.com/app/apikey" target="_blank">
+          Get Gemini API Key
+        </a>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+      <h3 class="text-3xl font-bold text-green-300 mb-4">Step 2: Copy the API Key</h3>
+      <p class="text-lg text-gray-300 mb-6">Click the copy icon next to your key to copy it.</p>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+      <h3 class="text-3xl font-bold text-green-300 mb-4">Step 3: Install Tampermonkey</h3>
+      <p class="text-lg text-gray-300 mb-6">Visit tampermonkey.net or install via Chrome Web Store.</p>
+      <div class="text-center mt-6">
+        <a class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-5 rounded-lg transition" href="https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo" target="_blank">
+          Install Tampermonkey
+        </a>
+      </div>
+    </div>
+
     <!-- Step 4 -->
     <div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
       <h3 class="text-3xl font-bold text-green-300 mb-4">Step 4: Install the Script</h3>
-      <p class="text-lg text-gray-300 mb-6">Click the big green button to install the script.</p>
-      <img alt="Step 4: Install the Script Screenshot" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-3xl mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/4.png?raw=true"/>
+      <p class="text-lg text-gray-300 mb-6">Click the green button below. (Temporarily unavailable)</p>
       <div class="text-center mt-6">
         <a id="install-script-btn-1" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl text-lg transition cursor-pointer">
           🚧 Install Script
@@ -36,30 +77,14 @@
 
     <!-- Step 5 -->
     <div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
-      <h3 class="text-3xl font-bold text-green-300 mb-4">Step 5: Launch Enhancer</h3>
-      <p class="text-lg text-gray-300 mb-6">Look for the LavenderDragon circle on MyDesigns.io</p>
-      <div class="text-center mt-6">
-        <a class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-5 rounded-lg transition" href="https://mydesigns.io/app" target="_blank">
-          Open MD
-        </a>
-      </div>
+      <h3 class="text-3xl font-bold text-green-300 mb-4">Step 5: Launch Enhancer in MyDesigns</h3>
+      <p class="text-lg text-gray-300 mb-6">Go to MyDesigns.io and look for the LavenderDragon icon.</p>
     </div>
 
-    <!-- Bottom Install Again -->
     <div class="text-center my-12">
       <a id="install-script-btn-2" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl text-lg transition cursor-pointer">
         🚧 Install Script
       </a>
-    </div>
-
-    <div class="text-center mt-6">
-      <a class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-5 rounded-lg transition" href="https://aistudio.google.com/app/apikey" target="_blank">
-        Get Gemini API Key
-      </a>
-    </div>
-
-    <div class="text-center mt-20 mb-10 text-xl text-green-300 font-semibold">
-      🎉 That's it! Enjoy a smoother, smarter workflow.
     </div>
 
     <div class="text-center">
@@ -68,34 +93,28 @@
       </a>
     </div>
 
-    <div class="text-center text-sm text-gray-400 mt-10">
-      <p>
-        This tool is provided <strong>'as-is'</strong>. You are <strong>responsible</strong> for any API costs.
-      </p>
+    <!-- Under Construction Modal -->
+    <div id="under-construction-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center">
+      <div class="bg-white text-slate-800 p-6 rounded-2xl shadow-xl max-w-md w-full text-center">
+        <h2 class="text-2xl font-bold mb-2">🚧 Under Construction 🚧</h2>
+        <p class="mb-4">This feature is still being built. Please check back soon!</p>
+        <button id="close-modal" class="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full">
+          Got it!
+        </button>
+      </div>
     </div>
+
+    <script>
+      const openModal = () => {
+        document.getElementById('under-construction-modal').classList.remove('hidden');
+      };
+      document.getElementById('install-script-btn-1').addEventListener('click', openModal);
+      document.getElementById('install-script-btn-2').addEventListener('click', openModal);
+      document.getElementById('close-modal').addEventListener('click', () => {
+        document.getElementById('under-construction-modal').classList.add('hidden');
+      });
+    </script>
   </div>
-
-  <!-- Under Construction Modal -->
-  <div id="under-construction-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center">
-    <div class="bg-white text-slate-800 p-6 rounded-2xl shadow-xl max-w-md w-full text-center">
-      <h2 class="text-2xl font-bold mb-2">🚧 Under Construction 🚧</h2>
-      <p class="mb-4">The script isn’t quite ready yet. Check back soon!</p>
-      <button id="close-modal" class="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full">
-        Got it!
-      </button>
-    </div>
-  </div>
-
-  <script>
-    const openModal = () => {
-      document.getElementById('under-construction-modal').classList.remove('hidden');
-    };
-
-    document.getElementById('install-script-btn-1').addEventListener('click', openModal);
-    document.getElementById('install-script-btn-2').addEventListener('click', openModal);
-    document.getElementById('close-modal').addEventListener('click', () => {
-      document.getElementById('under-construction-modal').classList.add('hidden');
-    });
-  </script>
 </body>
 </html>
+
