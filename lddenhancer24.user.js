@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        LavenderDragonDesign Enhancer
 // @namespace   http://tampermonkey.net/
-// @version     24.99 // UPDATED IMAGE DESCRIBER MODEL TO BE FASTER WITH OCR
+// @version     24.99.1 // Disabled main UI resizing to fix drag/resize bug
 // @description The definitive, stable version. Powerful keyword tool with Etsy trends and a high-performance image editor.
 // @match       https://mydesigns.io/app/*
 // @grant       GM_addStyle
@@ -140,8 +140,7 @@ document.head.appendChild(greenCheckboxStyle);
                 <small>Powered by LavenderDragonDesign</small>
                 <a href="${etsyLinkURL}" target="_blank" rel="noopener noreferrer" class="footer-link">My Etsy Shop</a>
                 <a href="${bmcLinkURL}" target="_blank" rel="noopener noreferrer"><img src="${bmcImageURL}" alt="Buy Me a Coffee" class="bmc-button"></a>
-            </div>
-            <div id="md-resize-handle"></div>`;
+            </div>`;
 
         const editorPopoutHTML = `
             <div id="md-editor-popout" class="md-popout-window" style="display: none;">
@@ -219,7 +218,8 @@ document.head.appendChild(greenCheckboxStyle);
         const savedWidth = localStorage.getItem('md-enhancer-width'); if (savedWidth) wrapper.style.width = savedWidth;
         const savedHeight = localStorage.getItem('md-enhancer-height'); if (savedHeight) wrapper.style.height = savedHeight;
         makeDraggable(wrapper, document.getElementById('md-drag-handle'));
-        makeResizable(wrapper, document.getElementById('md-resize-handle'));
+        // The following line for resizing the main UI has been removed.
+        // makeResizable(wrapper, document.getElementById('md-resize-handle'));
         makeDraggable(document.getElementById('md-editor-popout'), document.getElementById('md-editor-popout-drag-handle'));
         makeResizable(document.getElementById('md-editor-popout'), document.getElementById('md-editor-popout-resize-handle'));
         makeDraggable(document.getElementById('md-eraser-popout'), document.getElementById('md-eraser-popout-drag-handle'));
@@ -699,76 +699,8 @@ document.head.appendChild(greenCheckboxStyle);
         findRankedKeywords = async function() { const baseKeyword = document.getElementById('niche-keyword').value.trim(); const statusEl = document.getElementById('niche-status'); const resultsContainer = document.getElementById('niche-results-container'); if (!baseKeyword) { showCustomModal({ title: "Input Required", message: "Please enter a Main Design Subject.", type: 'alert' }); return; } statusEl.textContent = '🔎 Searching Etsy, Amazon & Google...'; resultsContainer.innerHTML = ''; const fetchGoogleSuggestions = q => new Promise(r => GM_xmlhttpRequest({ method: "GET", url: `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(q)}`, onload: res => { try { r(JSON.parse(res.responseText)[1] || []); } catch (e) { r([]); } }, onerror: () => r([]) })); const fetchAmazonSuggestions = q => new Promise(r => GM_xmlhttpRequest({ method: "GET", url: `https://completion.amazon.com/search/complete?search-alias=aps&client=amazon-search-ui&mkt=1&q=${encodeURIComponent(q)}`, onload: res => { try { r(JSON.parse(res.responseText)[1] || []); } catch (e) { r([]); } }, onerror: () => r([]) })); const fetchRedbubbleTrending = () => new Promise(resolve => { const rbUrl = `https://www.redbubble.com/api/explore/searches/trending`; const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rbUrl)}`; GM_xmlhttpRequest({ method: "GET", url: proxyUrl, onload: res => { try { const proxyResponse = JSON.parse(res.responseText); const rbData = JSON.parse(proxyResponse.contents); const trends = rbData.results.map(item => item.query); resolve(trends || []); } catch (e) { console.error("Error parsing Redbubble data:", e); resolve([]); } }, onerror: (err) => { console.error("Proxy error for Redbubble:", err); resolve([]); } }); }); const podProducts = ['shirt', 't-shirt', 'sticker', 'mug', 'png', 'svg', 'design', 'tumbler wrap', 'hoodie']; const alphabet = "abcdefghijklmnopqrstuvwxyz".split(''); const trendPromise = fetchRedbubbleTrending(); const productPromises = podProducts.flatMap(product => [ fetchGoogleSuggestions(`${baseKeyword} ${product}`), fetchAmazonSuggestions(`${baseKeyword} ${product}`) ]); const generalPromises = alphabet.flatMap(c => [ fetchGoogleSuggestions(`${baseKeyword} ${c}`), fetchAmazonSuggestions(`${baseKeyword} ${c}`) ]); const [trendingResults, productResults, generalResults] = await Promise.all([ trendPromise, Promise.all(productPromises), Promise.all(generalPromises) ]); const trendingKeywords = new Set(trendingResults.map(k => k.toLowerCase())); const productKeywords = new Set(productResults.flat().map(k => k.toLowerCase())); const generalKeywords = new Set(generalResults.flat().map(k => k.toLowerCase())); productKeywords.forEach(k => { trendingKeywords.delete(k); }); generalKeywords.forEach(k => { trendingKeywords.delete(k); productKeywords.delete(k); }); const sortedTrends = Array.from(trendingKeywords); const sortedProducts = Array.from(productKeywords); const sortedGeneral = Array.from(generalKeywords).sort(); statusEl.textContent = `✅ Found ${sortedTrends.length} trends, ${sortedProducts.length} product keywords, ${sortedGeneral.length} general ideas.`; let html = ''; if (sortedTrends.length > 0) { html += `<h4>🔥 Etsy Trending Now</h4>`; html += `<p class="md-hint" style="text-align:left;font-size:12px;">Live trending searches on Etsy for market research.</p>`; html += sortedTrends.map(k => createKeywordRow(k)).join(''); } if (sortedProducts.length > 0) { html += `<div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;"><h4>💡 Product-Specific Keywords</h4><button id="ldd-copy-all-tags-btn" class="niche-copy-btn" style="width: auto !important; padding: 4px 8px !important;">Copy 13 Tags</button></div>`; html += `<p class="md-hint" style="text-align:left;font-size:12px;">Keywords for specific products (shirts, stickers, mugs, etc.). Best for your tags.</p>`; html += sortedProducts.map(k => createKeywordRow(k)).join(''); } if (sortedGeneral.length > 0) { html += `<h4 style="margin-top:15px;">🏷️ General Niche Keywords</h4>`; html += `<p class="md-hint" style="text-align:left;font-size:12px;">Broader and long-tail ideas related to your main subject.</p>`; html += sortedGeneral.map(k => createKeywordRow(k)).join(''); } if (html.length === 0) { resultsContainer.innerHTML = `<p>No keywords found. This can happen with very niche terms. Try a broader subject.</p>`; } else { resultsContainer.innerHTML = html; } const copyAllBtn = document.getElementById('ldd-copy-all-tags-btn'); if (copyAllBtn) { copyAllBtn.addEventListener('click', (e) => { const etsyTags = sortedProducts.filter(tag => tag.length <= 20).slice(0, 13); const tagString = etsyTags.join(','); copyToClipboard(tagString, e.target, 'Copy 13 Tags', `✅ Copied ${etsyTags.length} Tags!`); }); } };
         syncToStorage = function() { const ids = [ 'md-main-word', 'md-product-type', 'md-custom-type', 'niche-keyword', 'pc-sale-price', 'pc-shipping-price-customer', 'pc-item-quantity', 'pc-discount-value', 'pc-discount-type', 'pc-cost-per-item', 'pc-actual-shipping-cost', 'pc-listing-fee', 'pc-transaction-fee-percent', 'pc-advertising-cost', 'pc-advertising-type', 'pc-misc-cost', 'pc-misc-type', 'pc-goal-value', 'settings-api-key' ]; ids.forEach(id => { const el = document.getElementById(id); if (el) localStorage.setItem(`mdEnhancer_${id}`, el.value); }); };
         loadFromStorage = function() { const defaults = {'pc-sale-price': '10.00','pc-shipping-price-customer': '0.00','pc-item-quantity': '1','pc-discount-value': '0.00','pc-discount-type': 'flat','pc-cost-per-item': '5.00','pc-actual-shipping-cost': '0.00','pc-listing-fee': '0.20','pc-transaction-fee-percent': '6.5','pc-advertising-cost': '0.00','pc-advertising-type': 'percent','pc-misc-cost': '0.00','pc-misc-type': 'percent','pc-goal-value': '5.00'}; Object.keys(defaults).forEach(id => { const el = document.getElementById(id); if(el) el.value = localStorage.getItem(`mdEnhancer_${id}`) || defaults[id]; }); ['md-main-word', 'md-product-type', 'md-custom-type', 'niche-keyword'].forEach(id => { const el = document.getElementById(id); if(el) el.value = localStorage.getItem(`mdEnhancer_${id}`) || ''; }); document.getElementById('settings-api-key').value = localStorage.getItem('mdEnhancer_geminiApiKey') || ''; };
-        
-        // --- [FIXED] DRAG AND RESIZE FUNCTIONS ---
-        makeDraggable = function(element, handle) {
-            if (!element || !handle) return;
-            let p3, p4; // Current mouse position
-
-            // This function moves the element
-            function doDrag(e) {
-                e.preventDefault();
-                let p1 = p3 - e.clientX; // horizontal distance moved
-                let p2 = p4 - e.clientY; // vertical distance moved
-                p3 = e.clientX; // update mouse X
-                p4 = e.clientY; // update mouse Y
-                element.style.top = (element.offsetTop - p2) + "px";
-                element.style.left = (element.offsetLeft - p1) + "px";
-            }
-
-            // This function cleans up the event listeners
-            function stopDrag() {
-                document.documentElement.removeEventListener('mousemove', doDrag, false);
-                document.documentElement.removeEventListener('mouseup', stopDrag, false);
-                window.removeEventListener('blur', stopDrag, false); // Also clean up if window loses focus
-            }
-
-            // Add the initial mousedown event
-            handle.addEventListener('mousedown', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                p3 = e.clientX;
-                p4 = e.clientY;
-
-                document.documentElement.addEventListener('mousemove', doDrag, false);
-                document.documentElement.addEventListener('mouseup', stopDrag, false);
-                window.addEventListener('blur', stopDrag, false); // Add listener for window losing focus
-            });
-        };
-
-        makeResizable = function(element, handle) {
-            if (!element || !handle) return;
-            let startX, startY, startWidth, startHeight;
-
-            // This function resizes the element
-            function doResize(e) {
-                let newWidth = startWidth + e.clientX - startX;
-                let newHeight = startHeight + e.clientY - startY;
-                if (newWidth > 400) element.style.width = newWidth + 'px';
-                if (newHeight > 300) element.style.height = newHeight + 'px';
-            }
-
-            // This function cleans up the event listeners
-            function stopResize() {
-                document.documentElement.removeEventListener('mousemove', doResize, false);
-                document.documentElement.removeEventListener('mouseup', stopResize, false);
-                window.removeEventListener('blur', stopResize, false); // Also clean up if window loses focus
-            }
-
-            // Add the initial mousedown event
-            handle.addEventListener('mousedown', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                startX = e.clientX;
-                startY = e.clientY;
-                startWidth = parseInt(getComputedStyle(element).width);
-                startHeight = parseInt(getComputedStyle(element).height);
-
-                document.documentElement.addEventListener('mousemove', doResize, false);
-                document.documentElement.addEventListener('mouseup', stopResize, false);
-                window.addEventListener('blur', stopResize, false); // Add listener for window losing focus
-            });
-        };
+        makeDraggable = function(element, handle) { if (!element || !handle) return; let p1=0, p2=0, p3=0, p4=0; handle.onmousedown = e => { e.preventDefault(); p3 = e.clientX; p4 = e.clientY; document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; }; document.onmousemove = me => { me.preventDefault(); p1 = p3 - me.clientX; p2 = p4 - me.clientY; p3 = me.clientX; p4 = me.clientY; element.style.top = (element.offsetTop - p2) + "px"; element.style.left = (element.offsetLeft - p1) + "px"; }; }; };
+        makeResizable = function(element, handle) { if (!element || !handle) return; handle.addEventListener('mousedown', function(e) { e.preventDefault(); let startX = e.clientX, startY = e.clientY, startWidth = parseInt(getComputedStyle(element).width), startHeight = parseInt(getComputedStyle(element).height); const doDrag = de => { let newWidth = startWidth + de.clientX - startX; let newHeight = startHeight + de.clientY - startY; if (newWidth > 400) element.style.width = newWidth + 'px'; if (newHeight > 300) element.style.height = newHeight + 'px'; }; const stopDrag = () => { document.documentElement.removeEventListener('mousemove', doDrag, false); document.documentElement.removeEventListener('mouseup', stopDrag, false); }; document.documentElement.addEventListener('mousemove', doDrag, false); document.documentElement.addEventListener('mouseup', stopDrag, false); }); };
     })();
 
     // --- DPI Helper Functions (moved to accessible scope) ---
@@ -826,10 +758,9 @@ document.head.appendChild(greenCheckboxStyle);
         return newPng;
     }
 
-
     // --- CSS STYLES ---
     GM_addStyle(`
-        #md-enhancer { position: fixed; top: 100px; right: 20px; min-width: 460px; max-width: 90vw; min-height: 650px; max-height: 90vh; resize: none; overflow: hidden; background: #ffffff; color: #000000; border-radius: 10px; padding: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); z-index: 10000; transition: right 0.3s ease, opacity 0.3s ease; opacity: 0; display: flex; flex-direction: column; }
+        #md-enhancer { position: fixed; top: 100px; right: 20px; width: 460px; height: 650px; resize: none; overflow: hidden; background: #ffffff; color: #000000; border-radius: 10px; padding: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); z-index: 10000; transition: right 0.3s ease, opacity 0.3s ease; opacity: 0; display: flex; flex-direction: column; }
         #md-enhancer.visible { right: 20px; opacity: 1; } #md-enhancer.hidden { right: -500px; opacity: 0; }
         #md-toggle-wrapper { position: fixed; bottom: 20px; right: 20px; z-index: 10001; cursor: pointer; } #md-toggle-icon { width: 40px; height: 40px; border-radius: 50%; }
         #md-close, .popout-close-btn { position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; cursor: pointer; z-index: 10; }
@@ -861,7 +792,7 @@ document.head.appendChild(greenCheckboxStyle);
         .enhancer-footer { display: flex; justify-content: center; align-items: center; gap: 10px; text-align: center; margin-top: auto; padding-top: 8px; border-top: 1px solid #dddddd; font-size: 11px; color: #888; flex-shrink: 0; }
         .footer-link { color: #555555; text-decoration: none; } .footer-link:hover { color: #000000; }
         .bmc-button { height: 28px; width: auto; }
-        #md-resize-handle, .popout-resize-handle { position: absolute; width: 15px; height: 15px; bottom: 0; right: 0; background: rgba(0,0,0,0.1); cursor: nwse-resize; z-index: 10; border-bottom-right-radius: 10px; }
+        .popout-resize-handle { position: absolute; width: 15px; height: 15px; bottom: 0; right: 0; background: rgba(0,0,0,0.1); cursor: nwse-resize; z-index: 10; border-bottom-right-radius: 10px; }
         #niche-results-container { border: 1px solid #dddddd; border-radius: 5px; margin-top: 10px; max-height: 400px; overflow-y: auto; padding: 8px; background: #ffffff;}
         #niche-results-container h4 { color: #1e7e34; margin: 8px 0 4px 0; font-size: 14px; padding-bottom: 3px; border-bottom: 1px solid #eeeeee; }
         .niche-keyword-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 2px; border-bottom: 1px solid #f0f0f0; }
