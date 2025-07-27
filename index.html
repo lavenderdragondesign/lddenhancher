@@ -62,10 +62,10 @@ Supercharge workflow with AI tools, profit calculator, niche research, and a zoo
 <p class="text-lg text-gray-300 mb-6">Click the Copy icon (it looks like two overlapping squares) to copy your Gemini key to your clipboard.</p>
 <img alt="Step 2: Copy the API Key Screenshot" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-3xl mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/step2.png?raw=true"/></div>
 <!-- Gemini Warning Popup -->
-<div id="gemini-warning-popup" class="fixed z-50 top-0 left-0 w-full h-full bg-black bg-opacity-80 flex items-center justify-center">
-  <div class="bg-white dark:bg-slate-900 text-black dark:text-white p-6 rounded-lg max-w-md text-center space-y-4 relative">
-    <img src="https://i.postimg.cc/3rcbPYPg/x-icon.png" alt="Close" id="popup-x-button" class="absolute top-2 right-2 w-6 h-6 cursor-pointer hover:opacity-70">
-    <p class="text-red-500 font-semibold">
+<div id="gemini-warning-popup" style="display: none;" class="fixed z-50 top-0 left-0 w-full h-full bg-black bg-opacity-80 flex items-center justify-center">
+  <div class="bg-slate-900 text-white p-6 rounded-lg max-w-md text-center space-y-4 relative">
+    <img src="https://i.postimg.cc/3rcbPYPg/x-icon.png" alt="Close" id="popup-x-button" class="absolute top-2 right-2 w-6 h-6 cursor-pointer hover:opacity-80">
+    <p class="text-red-400 font-semibold">
       ⚠️ While the Gemini API is <strong>virtually free</strong> for light use, excessive use <strong>can incur charges</strong>.
       You are responsible for any usage costs. By clicking below, you accept full responsibility.
     </p>
@@ -79,10 +79,27 @@ Supercharge workflow with AI tools, profit calculator, niche research, and a zoo
     if (popup) popup.style.display = 'none';
   }
 
+  function openPopup() {
+    const popup = document.getElementById('gemini-warning-popup');
+    if (popup) {
+      popup.style.display = 'flex';
+      setTimeout(closePopup, 15000); // auto-close after 15 seconds
+    }
+  }
+
   window.addEventListener("DOMContentLoaded", function () {
+    // Bind close logic
     document.getElementById('understand-button').addEventListener('click', closePopup);
     document.getElementById('popup-x-button').addEventListener('click', closePopup);
-    setTimeout(closePopup, 15000); // auto-close after 15 seconds
+
+    // Trigger only on click of "Get API Key"
+    document.body.addEventListener('click', function (e) {
+      const target = e.target;
+      if (target && target.textContent.trim() === "Get API Key") {
+        e.preventDefault();
+        openPopup();
+      }
+    });
   });
 </script>
 
@@ -214,4 +231,3 @@ Supercharge workflow with AI tools, profit calculator, niche research, and a zoo
     });
   });
 </script>
-
