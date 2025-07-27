@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lavender Dragon Design Enhancer v. 24</title>
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Lucide Icons CDN -->
+<script type="module">
+    import { createIcons, icons } from "https://unpkg.com/lucide@latest/dist/esm/lucide.js";
+    window.addEventListener("DOMContentLoaded", () => createIcons({ icons }));
+  </script>
+</head>
+<body class="bg-slate-900 text-white font-sans p-6">
+<div class="max-w-6xl mx-auto">
+<div class="text-center mb-10">
+<h1 class="text-4xl font-bold mb-4 flex items-center justify-center gap-2">
+<i class="w-8 h-8 text-green-400" data-lucide="brain"></i> LavenderDragonDesign Enhancer v. 24
+</h1>
+<p class="text-lg text-gray-300 mb-6">
+Supercharge workflow with AI tools, profit calculator, niche research, and a zoomable image editor. No fluff — just pure workflow magic.
+</p>
+</div>
+<div class="bg-slate-800 p-6 rounded-xl shadow mb-10 border border-slate-700">
+<h2 class="text-2xl font-semibold mb-4 flex items-center gap-2 text-green-300">
+<i class="w-6 h-6" data-lucide="sparkles"></i> Features
+  </h2>
+<ul class="list-disc pl-5 space-y-2 text-gray-300 text-lg">
+<li>Custom Instructions Manager to Copy / Paste repeated instructions</li>
+<li>Etsy Profit Calculator with Etsy Fees</li>
+<li>Image Resizer at 300 DPI</li>
+<li>Keywords tab with Niche Research</li>
+<li>Pop-out Image Editor (zoom, eraser, pan, save/discard)</li>
+<li>Image Describer: Generates tags, descriptions from images using AI</li>
+</ul>
+</div>
+<div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+<h3 class="text-3xl font-bold text-green-300 mb-4">Step 1: Create Your Gemini API Key</h3>
+<p class="text-lg text-gray-300 mb-6">
+    Go to Google AI Studio and click 'Create API key'. If prompted, choose 'Create API key in new project'.
+  </p>
+<div class="bg-slate-900 text-red-400 text-sm mt-6 text-center italic">
+    ⚠️ Disclaimer: While the Gemini API is <strong class="text-white">virtually free</strong> for light use,
+    overusage can result in charges. This does <strong class="text-white">not mean</strong> it is completely free.
+    By using this tool and entering your Gemini API key, you agree that you are solely responsible for any API usage costs incurred.
+    LavenderDragonDesign is not liable for charges resulting from your usage.
+  </div>
+<div class="text-center mt-6">
+<a class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-5 rounded-lg transition" data-api-warning="" href="#">
+      Get Gemini API Key
+    </a>
+</div>
+</div>
+<div class="text-center mt-6">
+</div>
+</div>
+<div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+<h3 class="text-3xl font-bold text-green-300 mb-4">Step 2: Copy the API Key</h3>
+<p class="text-lg text-gray-300 mb-6">Click the Copy icon (it looks like two overlapping squares) to copy your Gemini key to your clipboard.</p>
+<img alt="Step 2: Copy the API Key Screenshot" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-3xl mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/step2.png?raw=true"/></div></body></html>
+<div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+<h3 class="text-3xl font-bold text-green-300 mb-4">Step 3: Install Tampermonkey</h3>
+<p class="text-lg text-gray-300 mb-6">Use the Chrome Web Store. Tampermonkey works on Chrome, Edge, Brave, and more.</p>
+<img alt="Step 3: Install Tampermonkey Screenshot" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-3xl mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/tampermonkey.png?raw=true"/>
+<div class="text-center mt-6">
+<a class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-5 rounded-lg transition" href="https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo" target="_blank">
+                    Install Tampermonkey
+                </a>
+</div>
+</div>
+<div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+<h3 class="text-3xl font-bold text-green-300 mb-4">Step 3a: Allow Permissions</h3>
+<p class="text-lg text-gray-300 mb-6">After clicking install, your browser may ask for permission to add the extension. Click 'Add Extension'.</p>
+<img alt="Step 3a: Allow Permissions Screenshot" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-3xl mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/3a.png?raw=true"/>
+</div>
+<div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+<h3 class="text-3xl font-bold text-green-300 mb-4">Step 4: Install the Script</h3>
+<p class="text-lg text-gray-300 mb-6">Back on the Enhancer page, click the big green 'Install Script' button to launch Tampermonkey's install window.</p>
+<img alt="Step 4: Install the Script Screenshot" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-3xl mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/4.png?raw=true"/>
+<div class="text-center mt-6">
+<div class="text-center my-12" id="install-script">
+<a class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl text-lg transition" href="/lddenhancer24.user.js" title="Click to install in Tampermonkey">
+    🚀 Install Script
+  </a>
+</div>
+</div></div>
+<div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+<h3 class="text-3xl font-bold text-green-300 mb-4">Step 4a: Confirm Script Installation</h3>
+<p class="text-lg text-gray-300 mb-6">
+    Tampermonkey will show the script code. Just click the <strong class="text-white">'Install'</strong> button in the top-left of the Tampermonkey tab to confirm installation.
+  </p>
+<img alt="Step 4a: Confirm Script Installation Screenshot" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-3xl mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/4a.png?raw=true"/>
+</div>
+<div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+<h3 class="text-3xl font-bold text-green-300 mb-4">Step 4b: Pin Tampermonkey to the Toolbar</h3>
+<p class="text-lg text-gray-300 mb-4">
+    Click the puzzle icon in Chrome’s toolbar, then click the pin icon next to Tampermonkey.
+  </p>
+  <img alt="Pin Tampermonkey to Toolbar" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-md mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/menu.png?raw=true"/>
+
+</div>
+
+<div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+<h3 class="text-3xl font-bold text-green-300 mb-4">Step 5: Open MD and Launch Enhancer
+
+<div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+<h3 class="text-3xl font-bold text-yellow-400 mb-4 flex items-center gap-2">
+
+</h3>
+<p class="text-lg text-gray-300 mb-6">Go to MD. Look for the glowing LavenderDragon circle in the bottom-right corner.</p>
+<img alt="Step 5: Open MyDesigns and Launch Enhancer Screenshot" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-3xl mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/mainui.png?raw=true"/>
+<div class="text-center mt-6">
+<a class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-5 rounded-lg transition" href="https://mydesigns.io/app" target="_blank">
+                    Open MD
+                </a>
+
+              </div>
+<i class="w-6 h-6" data-lucide="alert-circle"></i> Step 5b: UI Not Showing? Try This Fix
+  </h3>
+<p class="text-2xl text-gray-300 mb-4">
+    If you don't see the glowing <strong class="text-white">LavenderDragonDesign</strong> circle in the bottom-right corner of MyDesigns, do this:
+  </p>
+<ol class="list-decimal list-inside text-xl text-gray-300 space-y-2 mb-6">
+<li>Click the Tampermonkey icon in your browser toolbar.</li>
+<li>Disable the <strong class="text-white">LavenderDragonDesign Enhancer</strong> script.</li>
+<li>Then re-enable it.</li>
+<li>Refresh the MD page.</li>
+</ol>
+<img alt="Disable and Reenable Script + Refresh" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-3xl mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/refresh.png?raw=true"/>
+</div>
+</div>
+<div class="bg-slate-800 p-6 rounded-xl shadow-xl mb-10 border border-slate-700">
+<h3 class="text-3xl font-bold text-green-300 mb-4">Step 6: Paste Gemini API Key in Settings</h3>
+<p class="text-lg text-gray-300 mb-6">Click the Settings tab in the Enhancer. Paste your copied Gemini key into the box and click Save.</p>
+<img alt="Step 6: Paste Gemini API Key in Settings Screenshot" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-3xl mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/enterkey%20in%20settings.png?raw=true"/>
+</div>
+<div class="text-center my-12" id="install-script">
+<a class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl text-lg transition" href="/lddenhancer24.user.js" title="Click to install in Tampermonkey">
+    🚀 Install Script
+  </a>
+</div>
+<div class="text-center mt-6">
+</div>
+<div class="text-center mt-20 mb-10 text-xl text-green-300 font-semibold">
+  🎉 That's it! Enjoy a smoother, smarter workflow.
+</div>
+<div class="text-center">
+<a href="https://www.buymeacoffee.com/lavenderdragon" target="_blank">
+<img alt="Buy Me a Coffee" class="mx-auto w-60 transition hover:scale-105" src="https://i.postimg.cc/28YhHbfZ/bmc-button.png"/>
+</a>
+</div>
+<div class="bg-slate-900 text-red-400 text-sm mt-10 text-center italic">
+  ⚠️ Disclaimer: By using this tool and entering your Gemini API key, you agree that you are solely responsible for any API usage costs incurred. LavenderDragonDesign is not liable for charges resulting from usage of your key.
+</div>
+<!-- API Warning Modal -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 hidden" id="apiWarningModal">
+<div class="bg-slate-800 p-6 rounded-xl border border-red-500 shadow-2xl max-w-md w-full text-center">
+<h2 class="text-2xl font-bold text-red-400 mb-4 flex items-center justify-center gap-2">
+<i class="w-6 h-6" data-lucide="alert-triangle"></i> Important Notice
+    </h2>
+<p class="text-gray-300 mb-6">
+      While the Gemini API is <strong class="text-white">virtually free</strong> for light use, overusage can result in charges.
+      This does <strong class="text-white">not mean</strong> it is completely free.
+      By continuing, you agree that you are solely responsible for any costs associated with your API key.
+      LavenderDragonDesign is not liable for any usage charges.
+    </p>
+<div class="flex justify-center gap-4">
+<button class="px-4 py-2 rounded-lg bg-gray-500 hover:bg-gray-600 text-white font-semibold" onclick="document.getElementById('apiWarningModal').classList.add('hidden')">
+        Cancel
+      </button>
+<a class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold" href="https://aistudio.google.com/app/apikey" id="proceedToApi" target="_blank">
+        I Understand
+      </a>
+</div>
+</div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const btns = document.querySelectorAll('[data-api-warning]');
+    btns.forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('apiWarningModal').classList.remove('hidden');
+      });
+    });
+  });
+</script>
