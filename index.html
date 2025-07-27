@@ -62,9 +62,15 @@ Supercharge workflow with AI tools, profit calculator, niche research, and a zoo
 <p class="text-lg text-gray-300 mb-6">Click the Copy icon (it looks like two overlapping squares) to copy your Gemini key to your clipboard.</p>
 <img alt="Step 2: Copy the API Key Screenshot" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-3xl mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/step2.png?raw=true"/></div>
 <script>
-  document.getElementById('understand-button').addEventListener('click', function () {
-    document.getElementById('gemini-warning-popup').style.display = 'none';
-  });
+  function closePopup() {
+    const popup = document.getElementById('gemini-warning-popup');
+    if (popup) popup.style.display = 'none';
+  }
+
+  document.getElementById('understand-button').addEventListener('click', closePopup);
+  document.getElementById('popup-x-button').addEventListener('click', closePopup);
+
+  setTimeout(closePopup, 15000); // auto-close after 15 seconds
 </script>
 </body>
 </html>
