@@ -71,7 +71,7 @@ Supercharge workflow with AI tools, profit calculator, niche research, and a zoo
 <div id="gemini-warning-popup" style="display: none;" class="fixed z-50 top-0 left-0 w-full h-full bg-black bg-opacity-80 flex items-center justify-center text-white">
   <div class="bg-slate-900 text-white p-6 rounded-lg max-w-md text-center space-y-4 relative">
     <img src="https://i.postimg.cc/3rcbPYPg/x-icon.png" alt="Close" id="popup-x-button" class="absolute top-2 right-2 w-6 h-6 cursor-pointer hover:opacity-80">
-    <p class="text-red-400 font-semibold">
+    <p class="text-white font-semibold">
       ⚠️ While the Gemini API is <strong>virtually free</strong> for light use, excessive use <strong>can incur charges</strong>.
       You are responsible for any usage costs. By clicking below, you accept full responsibility.
     </p>
@@ -89,7 +89,7 @@ Supercharge workflow with AI tools, profit calculator, niche research, and a zoo
     const popup = document.getElementById('gemini-warning-popup');
     if (popup) {
       popup.style.display = 'flex';
-      setTimeout(closePopup, 15000);
+      setTimeout(closePopup, 30000);
     }
   }
 
