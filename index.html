@@ -61,6 +61,9 @@ Supercharge workflow with AI tools, profit calculator, niche research, and a zoo
 <h3 class="text-3xl font-bold text-green-300 mb-4">Step 2: Copy the API Key</h3>
 <p class="text-lg text-gray-300 mb-6">Click the Copy icon (it looks like two overlapping squares) to copy your Gemini key to your clipboard.</p>
 <img alt="Step 2: Copy the API Key Screenshot" class="rounded-2xl shadow-2xl border-2 border-slate-600 w-full max-w-3xl mx-auto" src="https://github.com/lavenderdragondesign/lddenhancher/blob/main/step2.png?raw=true"/></div>
+
+
+
 <!-- Gemini Warning Popup -->
 <div id="gemini-warning-popup" style="display: none;" class="fixed z-50 top-0 left-0 w-full h-full bg-black bg-opacity-80 flex items-center justify-center">
   <div class="bg-slate-900 text-white p-6 rounded-lg max-w-md text-center space-y-4 relative">
@@ -88,14 +91,12 @@ Supercharge workflow with AI tools, profit calculator, niche research, and a zoo
   }
 
   window.addEventListener("DOMContentLoaded", function () {
-    // Bind close logic
     document.getElementById('understand-button').addEventListener('click', closePopup);
     document.getElementById('popup-x-button').addEventListener('click', closePopup);
 
-    // Trigger only on click of "Get API Key"
     document.body.addEventListener('click', function (e) {
-      const target = e.target;
-      if (target && target.textContent.trim() === "Get API Key") {
+      const target = e.target.closest('[data-api-warning]');
+      if (target) {
         e.preventDefault();
         openPopup();
       }
@@ -198,36 +199,4 @@ Supercharge workflow with AI tools, profit calculator, niche research, and a zoo
 <div class="bg-slate-900 text-red-400 text-sm mt-10 text-center italic">
   ⚠️ Disclaimer: By using this tool and entering your Gemini API key, you agree that you are solely responsible for any API usage costs incurred. LavenderDragonDesign is not liable for charges resulting from usage of your key.
 </div>
-<!-- API Warning Modal -->
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 hidden" id="apiWarningModal">
-<div class="bg-slate-800 p-6 rounded-xl border border-red-500 shadow-2xl max-w-md w-full text-center">
-<h2 class="text-2xl font-bold text-red-400 mb-4 flex items-center justify-center gap-2">
-<i class="w-6 h-6" data-lucide="alert-triangle"></i> Important Notice
-    </h2>
-<p class="text-gray-300 mb-6">
-      While the Gemini API is <strong class="text-white">virtually free</strong> for light use, overusage can result in charges.
-      This does <strong class="text-white">not mean</strong> it is completely free.
-      By continuing, you agree that you are solely responsible for any costs associated with your API key.
-      LavenderDragonDesign is not liable for any usage charges.
-    </p>
-<div class="flex justify-center gap-4">
-<button class="px-4 py-2 rounded-lg bg-gray-500 hover:bg-gray-600 text-white font-semibold" onclick="document.getElementById('apiWarningModal').classList.add('hidden')">
-        Cancel
-      </button>
-<a class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold" href="https://aistudio.google.com/app/apikey" id="proceedToApi" target="_blank">
-        I Understand
-      </a>
-</div>
-</div>
-</div>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const btns = document.querySelectorAll('[data-api-warning]');
-    btns.forEach(btn => {
-      btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        document.getElementById('apiWarningModal').classList.remove('hidden');
-      });
-    });
-  });
-</script>
+
