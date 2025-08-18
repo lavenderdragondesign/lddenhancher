@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        LavenderDragonDesign Enhancer
 // @namespace   http://tampermonkey.net/
-// @version     24.99 // UPDATED IMAGE DESCRIBER MODEL TO BE FASTER WITH OCR
+// @version     24.99.1 // Disabled main UI resizing to fix drag/resize bug
 // @description The definitive, stable version. Powerful keyword tool with Etsy trends and a high-performance image editor.
 // @match       https://mydesigns.io/app/*
 // @grant       GM_addStyle
@@ -140,8 +140,7 @@ document.head.appendChild(greenCheckboxStyle);
                 <small>Powered by LavenderDragonDesign</small>
                 <a href="${etsyLinkURL}" target="_blank" rel="noopener noreferrer" class="footer-link">My Etsy Shop</a>
                 <a href="${bmcLinkURL}" target="_blank" rel="noopener noreferrer"><img src="${bmcImageURL}" alt="Buy Me a Coffee" class="bmc-button"></a>
-            </div>
-            <div id="md-resize-handle"></div>`;
+            </div>`;
 
         const editorPopoutHTML = `
             <div id="md-editor-popout" class="md-popout-window" style="display: none;">
@@ -219,7 +218,8 @@ document.head.appendChild(greenCheckboxStyle);
         const savedWidth = localStorage.getItem('md-enhancer-width'); if (savedWidth) wrapper.style.width = savedWidth;
         const savedHeight = localStorage.getItem('md-enhancer-height'); if (savedHeight) wrapper.style.height = savedHeight;
         makeDraggable(wrapper, document.getElementById('md-drag-handle'));
-        makeResizable(wrapper, document.getElementById('md-resize-handle'));
+        // The following line for resizing the main UI has been removed.
+        // makeResizable(wrapper, document.getElementById('md-resize-handle'));
         makeDraggable(document.getElementById('md-editor-popout'), document.getElementById('md-editor-popout-drag-handle'));
         makeResizable(document.getElementById('md-editor-popout'), document.getElementById('md-editor-popout-resize-handle'));
         makeDraggable(document.getElementById('md-eraser-popout'), document.getElementById('md-eraser-popout-drag-handle'));
@@ -546,36 +546,8 @@ document.head.appendChild(greenCheckboxStyle);
     // --- HELPER & CORE FUNCTIONS ---
     function copyToClipboard(text, button, defaultText, successText = "✅ Copied!") { if (text !== null) navigator.clipboard.writeText(text); if (button) { button.textContent = successText; setTimeout(() => { button.textContent = defaultText; }, 1500); } }
     function handleFileSelection(e) { const file = e.target.files.length > 0 ? e.target.files[0] : null; if (!file) return; const statusEl = document.getElementById('describer-file-status'), controlsEl = document.getElementById('describer-controls'); if (file.type === 'image/jpeg' || file.type === 'image/png') { describerImageFile = file; statusEl.textContent = file.name; statusEl.style.color = '#555'; controlsEl.style.display = 'block'; } else { describerImageFile = null; statusEl.textContent = "Error: Please choose a JPG or PNG file."; statusEl.style.color = '#dc3545'; controlsEl.style.display = 'none'; } }
-function saveGeminiApiKey() {
-    const keyInput = document.getElementById('settings-api-key');
-    const statusEl = document.getElementById('settings-gemini-status');
-
-    if (keyInput && keyInput.value) {
-        showCustomModal({
-            title: 'API Usage Warning',
-            message: `This tool is provided 'as-is'. You are responsible for any costs incurred by using your Gemini API key. Do you understand and agree to this?`,
-            type: 'confirm',
-            okText: 'Yes, I Understand',
-            cancelText: 'Cancel',
-            onOk: () => {
-                localStorage.setItem('mdEnhancer_geminiApiKey', keyInput.value);
-                statusEl.textContent = "✅ Key Saved!";
-                statusEl.style.color = '#28a745';
-                setTimeout(() => { statusEl.textContent = ''; }, 3000);
-            },
-            onCancel: () => {
-                statusEl.textContent = "❌ Save Cancelled";
-                statusEl.style.color = '#dc3545';
-                setTimeout(() => { statusEl.textContent = ''; }, 3000);
-            }
-        });
-    } else {
-        localStorage.removeItem('mdEnhancer_geminiApiKey');
-        statusEl.textContent = "Key removed.";
-        statusEl.style.color = '#6c757d';
-        setTimeout(() => { statusEl.textContent = ''; }, 3000);
-    }
-}    function runAllCalculations() { calculateProfit(null, true); calculateSuggestedSalePrice(); }
+    function saveGeminiApiKey() { const keyInput = document.getElementById('settings-api-key'); const statusEl = document.getElementById('settings-gemini-status'); if (keyInput && keyInput.value) { localStorage.setItem('mdEnhancer_geminiApiKey', keyInput.value); statusEl.textContent = "✅ Key Saved!"; statusEl.style.color = '#28a745'; } else { localStorage.removeItem('mdEnhancer_geminiApiKey'); statusEl.textContent = "Key removed."; statusEl.style.color = '#6c757d'; } setTimeout(() => { statusEl.textContent = ''; }, 3000); }
+    function runAllCalculations() { calculateProfit(null, true); calculateSuggestedSalePrice(); }
 
     (function() {
         // --- Pan & Zoom Logic ---
@@ -786,10 +758,9 @@ function saveGeminiApiKey() {
         return newPng;
     }
 
-
     // --- CSS STYLES ---
     GM_addStyle(`
-        #md-enhancer { position: fixed; top: 100px; right: 20px; min-width: 460px; max-width: 90vw; min-height: 650px; max-height: 90vh; resize: none; overflow: hidden; background: #ffffff; color: #000000; border-radius: 10px; padding: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); z-index: 10000; transition: right 0.3s ease, opacity 0.3s ease; opacity: 0; display: flex; flex-direction: column; }
+        #md-enhancer { position: fixed; top: 100px; right: 20px; width: 460px; height: 650px; resize: none; overflow: hidden; background: #ffffff; color: #000000; border-radius: 10px; padding: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); z-index: 10000; transition: right 0.3s ease, opacity 0.3s ease; opacity: 0; display: flex; flex-direction: column; }
         #md-enhancer.visible { right: 20px; opacity: 1; } #md-enhancer.hidden { right: -500px; opacity: 0; }
         #md-toggle-wrapper { position: fixed; bottom: 20px; right: 20px; z-index: 10001; cursor: pointer; } #md-toggle-icon { width: 40px; height: 40px; border-radius: 50%; }
         #md-close, .popout-close-btn { position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; cursor: pointer; z-index: 10; }
@@ -821,7 +792,7 @@ function saveGeminiApiKey() {
         .enhancer-footer { display: flex; justify-content: center; align-items: center; gap: 10px; text-align: center; margin-top: auto; padding-top: 8px; border-top: 1px solid #dddddd; font-size: 11px; color: #888; flex-shrink: 0; }
         .footer-link { color: #555555; text-decoration: none; } .footer-link:hover { color: #000000; }
         .bmc-button { height: 28px; width: auto; }
-        #md-resize-handle, .popout-resize-handle { position: absolute; width: 15px; height: 15px; bottom: 0; right: 0; background: rgba(0,0,0,0.1); cursor: nwse-resize; z-index: 10; border-bottom-right-radius: 10px; }
+        .popout-resize-handle { position: absolute; width: 15px; height: 15px; bottom: 0; right: 0; background: rgba(0,0,0,0.1); cursor: nwse-resize; z-index: 10; border-bottom-right-radius: 10px; }
         #niche-results-container { border: 1px solid #dddddd; border-radius: 5px; margin-top: 10px; max-height: 400px; overflow-y: auto; padding: 8px; background: #ffffff;}
         #niche-results-container h4 { color: #1e7e34; margin: 8px 0 4px 0; font-size: 14px; padding-bottom: 3px; border-bottom: 1px solid #eeeeee; }
         .niche-keyword-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 2px; border-bottom: 1px solid #f0f0f0; }
